@@ -62,22 +62,23 @@ const handleCheckout = () => {
     </header>
 
     <!-- B. Hero Section -->
-    <section class="relative bg-[#E6F0F7] py-16 md:py-24 px-[5%] overflow-hidden text-center">
-      <div class="absolute inset-0 z-0 opacity-25">
-        <img :src="heroImage" alt="Hero background" class="w-full h-full object-cover" />
+    <section class="relative bg-[#00518E] py-16 md:py-28 px-[5%] overflow-hidden text-center">
+      <div class="absolute inset-0 z-0">
+        <img :src="heroImage" alt="Hero background" class="w-full h-full object-cover opacity-85" />
+        <div class="absolute inset-0 bg-gradient-to-r from-[#00518E]/90 via-[#00518E]/75 to-[#00518E]/90"></div>
       </div>
-      <div class="absolute -top-10 left-10 text-4xl animate-bounce text-[#DF0615] z-10">🎈</div>
+      <div class="absolute top-6 left-10 text-4xl animate-bounce text-[#DF0615] z-10">🎈</div>
       <div class="absolute top-10 right-20 text-4xl animate-pulse text-[#FCDA00] z-10">⭐</div>
       <div class="absolute bottom-5 left-1/4 text-3xl text-[#009B55] z-10">🌿</div>
 
       <div class="max-w-2xl mx-auto relative z-10">
-        <span class="bg-white text-[#00518E] font-bold text-xs uppercase px-4 py-1.5 rounded-full tracking-widest inline-block mb-4 shadow-sm border border-[#00518E]/10">
+        <span class="bg-[#FCDA00] text-[#00518E] font-extrabold text-xs uppercase px-4 py-1.5 rounded-full tracking-widest inline-block mb-4 shadow-md">
           New Term Collection 2026/2027
         </span>
-        <h2 class="text-4xl md:text-5xl font-extrabold text-[#00518E] tracking-tight mb-4 drop-shadow-sm">
+        <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tight mb-4 drop-shadow-md">
           Joy for Every Little One!
         </h2>
-        <p class="text-[#555555] text-base md:text-lg mb-8 max-w-[500px] mx-auto font-medium">
+        <p class="text-white text-base md:text-xl mb-8 max-w-[550px] mx-auto font-medium drop-shadow">
           Equipping students with premium, comfortable school uniforms, blazers, and sports kits crafted for all-day confidence.
         </p>
         <div class="flex justify-center items-center space-x-4 flex-wrap gap-y-3">
