@@ -67,9 +67,6 @@ const handleCheckout = () => {
         <img :src="heroImage" alt="Hero background" class="w-full h-full object-cover opacity-85" />
         <div class="absolute inset-0 bg-gradient-to-r from-[#00518E]/90 via-[#00518E]/75 to-[#00518E]/90"></div>
       </div>
-      <div class="absolute top-6 left-10 text-4xl animate-bounce text-[#DF0615] z-10">🎈</div>
-      <div class="absolute top-10 right-20 text-4xl animate-pulse text-[#FCDA00] z-10">⭐</div>
-      <div class="absolute bottom-5 left-1/4 text-3xl text-[#009B55] z-10">🌿</div>
 
       <div class="max-w-2xl mx-auto relative z-10">
         <span class="bg-[#FCDA00] text-[#00518E] font-extrabold text-xs uppercase px-4 py-1.5 rounded-full tracking-widest inline-block mb-4 shadow-md">
