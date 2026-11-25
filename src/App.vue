@@ -1,5 +1,6 @@
 <script setup>
 import { useStore } from './stores/uniformStore'
+import heroImage from './assets/image_15644a86.jpg'
 
 const store = useStore()
 
@@ -62,9 +63,12 @@ const handleCheckout = () => {
 
     <!-- B. Hero Section -->
     <section class="relative bg-[#E6F0F7] py-16 md:py-24 px-[5%] overflow-hidden text-center">
-      <div class="absolute -top-10 left-10 text-4xl animate-bounce text-[#DF0615]">🎈</div>
-      <div class="absolute top-10 right-20 text-4xl animate-pulse text-[#FCDA00]">⭐</div>
-      <div class="absolute bottom-5 left-1/4 text-3xl text-[#009B55]">🌿</div>
+      <div class="absolute inset-0 z-0 opacity-25">
+        <img :src="heroImage" alt="Hero background" class="w-full h-full object-cover" />
+      </div>
+      <div class="absolute -top-10 left-10 text-4xl animate-bounce text-[#DF0615] z-10">🎈</div>
+      <div class="absolute top-10 right-20 text-4xl animate-pulse text-[#FCDA00] z-10">⭐</div>
+      <div class="absolute bottom-5 left-1/4 text-3xl text-[#009B55] z-10">🌿</div>
 
       <div class="max-w-2xl mx-auto relative z-10">
         <span class="bg-white text-[#00518E] font-bold text-xs uppercase px-4 py-1.5 rounded-full tracking-widest inline-block mb-4 shadow-sm border border-[#00518E]/10">
