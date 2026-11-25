@@ -29,7 +29,7 @@ const handleCheckout = () => {
       <div class="bg-[#E5C75B] px-[5%] py-3 flex justify-between items-center text-[#222222]">
         <div class="flex items-center space-x-3 cursor-pointer" @click="window.scrollTo({top: 0, behavior: 'smooth'})">
           <span class="text-2xl bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm">🧸</span>
-          <h1 class="text-xl font-extrabold tracking-tight text-[#222222]">Children Store</h1>
+          <h1 class="text-xl font-extrabold tracking-tight text-[#222222]">Katlehong School Suppliers</h1>
         </div>
         <div class="hidden md:flex items-center space-x-4 text-sm font-medium">
           <span class="bg-white/60 px-3 py-1 rounded-full text-xs">🌟 Free Express Delivery on Orders Over $50</span>
@@ -263,7 +263,7 @@ const handleCheckout = () => {
 
           <div v-if="store.checkoutSuccess" class="m-6 bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center">
             <p class="font-bold text-lg mb-1">🎉 Order Placed Successfully!</p>
-            <p class="text-xs text-emerald-600">Thank you for ordering with Children Store. Your confirmation has been emailed.</p>
+            <p class="text-xs text-emerald-600">Thank you for ordering with Katlehong School Suppliers. Your confirmation has been emailed.</p>
           </div>
 
           <div v-else class="flex-1 overflow-y-auto p-6 space-y-4">
