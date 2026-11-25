@@ -1,255 +1,304 @@
 <script setup>
-import { ref } from 'vue'
-import { useUniformStore } from './stores/uniformStore'
+import { useStore } from './stores/uniformStore'
 
-const store = useUniformStore()
+const store = useStore()
 
-const selectedSize = ref({})
-const isCartOpen = ref(false)
-const checkoutSuccess = ref(false)
-
-const handleAddToCart = (item) => {
-  const size = selectedSize.value[item.id] || item.sizes[0]
-  store.addToCart(item, size)
-  isCartOpen.value = true
-}
+const sampleProducts = [
+  { id: 101, name: 'Classic Academy Blazer', price: 45.00, category: 'Blazers & Formal', image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=400&q=80' },
+  { id: 102, name: 'Pleated School Skirt', price: 28.50, category: 'Skirts & Pinafores', image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=400&q=80' },
+  { id: 103, name: 'Oxford White Shirt (2-Pack)', price: 22.00, category: 'Shirts & Polos', image: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&w=400&q=80' },
+  { id: 104, name: 'Complete PE Sports Bundle', price: 40.00, category: 'Sports & PE Kits', image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=400&q=80' }
+]
 
 const handleCheckout = () => {
-  checkoutSuccess.value = true
+  store.checkoutSuccess = true
   store.clearCart()
   setTimeout(() => {
-    checkoutSuccess.value = false
-    isCartOpen.value = false
+    store.checkoutSuccess = false
+    store.isCartOpen = false
   }, 4000)
 }
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 text-slate-800 font-sans w-full">
-    <!-- Header -->
-    <header class="bg-indigo-700 text-white shadow-md sticky top-0 z-30">
-      <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3 cursor-pointer" @click="store.selectedSupplierId = null">
-          <span class="text-3xl">🎓</span>
-          <div>
-            <h1 class="text-xl font-bold tracking-tight">CampusThreads</h1>
-            <p class="text-xs text-indigo-200">School Uniform Marketplace</p>
-          </div>
+  <div class="min-h-screen bg-white text-[#555555] font-sans selection:bg-[#E5C75B] selection:text-[#222222]">
+    
+    <!-- A. Header & Navigation -->
+    <header class="w-full sticky top-0 z-40 shadow-sm">
+      <!-- Top Utility Bar -->
+      <div class="bg-[#E5C75B] px-[5%] py-3 flex justify-between items-center text-[#222222]">
+        <div class="flex items-center space-x-3 cursor-pointer" @click="window.scrollTo({top: 0, behavior: 'smooth'})">
+          <span class="text-2xl bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm">🧸</span>
+          <h1 class="text-xl font-extrabold tracking-tight text-[#222222]">Children Store</h1>
         </div>
+        <div class="hidden md:flex items-center space-x-4 text-sm font-medium">
+          <span class="bg-white/60 px-3 py-1 rounded-full text-xs">🌟 Free Express Delivery on Orders Over $50</span>
+          <span>📞 Support: 1-800-KIDS-UNIFORM</span>
+        </div>
+        <button @click="store.isCartOpen = true" class="relative bg-[#45B2C3] hover:bg-[#3ca2b3] text-white px-5 py-2 rounded-full font-bold text-sm transition shadow-sm flex items-center space-x-2">
+          <span>🛒 Cart</span>
+          <span v-if="store.cartItemCount > 0" class="absolute -top-1 -right-1 bg-[#E28D97] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+            {{ store.cartItemCount }}
+          </span>
+        </button>
+      </div>
 
-        <div class="flex items-center space-x-4">
-          <button 
-            @click="isCartOpen = true"
-            class="relative bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg font-medium flex items-center space-x-2 transition shadow-sm border border-indigo-500"
-          >
-            <span>🛒 Cart</span>
-            <span v-if="store.cartItemCount > 0" class="absolute -top-2 -right-2 bg-emerald-500 text-white text-xs w-6 h-6 rounded-full flex items-center justify-center font-bold shadow">
-              {{ store.cartItemCount }}
-            </span>
-          </button>
-        </div>
+      <!-- Sub-Navigation Bar -->
+      <div class="bg-white px-[5%] py-3 border-b border-[#EEEEEE] flex justify-between items-center">
+        <span class="bg-[#E5C75B]/30 text-[#222222] px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">
+          Official Suppliers
+        </span>
+        <nav class="hidden lg:flex items-center space-x-6 text-sm font-semibold text-[#222222]">
+          <a href="#categories" class="hover:text-[#45B2C3] transition">Categories</a>
+          <a href="#products" class="hover:text-[#45B2C3] transition">Featured Uniforms</a>
+          <a href="#sale" class="hover:text-[#45B2C3] transition">Seasonal Sale</a>
+          <a href="#reviews" class="hover:text-[#45B2C3] transition">Reviews</a>
+        </nav>
+        <span class="bg-[#F3A6B1] text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">
+          ✨ Up to 50% Off
+        </span>
       </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- B. Hero Section -->
+    <section class="relative bg-gradient-to-r from-[#7AC5D0] to-[#86d0dc] py-16 md:py-24 px-[5%] overflow-hidden text-center">
+      <div class="absolute -top-10 left-10 text-4xl animate-bounce">🎈</div>
+      <div class="absolute top-10 right-20 text-4xl animate-pulse">⭐</div>
+      <div class="absolute bottom-5 left-1/4 text-3xl">☁️</div>
+
+      <div class="max-w-2xl mx-auto relative z-10">
+        <span class="bg-white/80 text-[#45B2C3] font-bold text-xs uppercase px-4 py-1.5 rounded-full tracking-widest inline-block mb-4 shadow-sm">
+          New Term Collection 2026/2027
+        </span>
+        <h2 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4 drop-shadow-sm">
+          Joy for Every Little One!
+        </h2>
+        <p class="text-white/90 text-base md:text-lg mb-8 max-w-[500px] mx-auto font-medium">
+          Equipping students with premium, comfortable school uniforms, blazers, and sports kits crafted for all-day confidence.
+        </p>
+        <div class="flex justify-center items-center space-x-4 flex-wrap gap-y-3">
+          <a href="#products" class="bg-[#45B2C3] hover:bg-[#3ca2b3] text-white font-bold px-8 py-3.5 rounded-full shadow-lg transition transform hover:-translate-y-0.5">
+            Shop Uniforms
+          </a>
+          <a href="#sale" class="bg-[#E28D97] hover:bg-[#d67e88] text-white font-bold px-8 py-3.5 rounded-full shadow-lg transition transform hover:-translate-y-0.5">
+            View Sale
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- C. Body: Category & Promo Grids -->
+    <div id="categories" class="max-w-[1200px] mx-auto px-6 py-12">
       
-      <!-- Supplier Listing View -->
-      <div v-if="!store.selectedSupplier">
-        <div class="mb-8 text-center max-w-2xl mx-auto">
-          <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight mb-2">Verified School Uniform Suppliers</h2>
-          <p class="text-slate-600">Select an official supplier partner below to browse and order uniform bundles, blazers, sports kits, and everyday wear.</p>
+      <!-- Row 1 (4-Column Category Grid) -->
+      <div class="mb-12">
+        <div class="text-center mb-10">
+          <h3 class="text-2xl md:text-3xl font-extrabold text-[#222222]">Shop by Category</h3>
+          <p class="text-sm text-[#555555] mt-1">Explore our certified school apparel ranges</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           <div 
-            v-for="supplier in store.suppliers" 
-            :key="supplier.id"
-            class="bg-white rounded-2xl shadow-md hover:shadow-xl transition overflow-hidden border border-slate-100 flex flex-col group cursor-pointer"
-            @click="store.selectSupplier(supplier.id)"
+            v-for="cat in store.categories" 
+            :key="cat.id"
+            :class="cat.bg"
+            class="rounded-2xl overflow-hidden aspect-[4/5] relative flex flex-col justify-between p-6 shadow-md hover:shadow-xl transition group cursor-pointer"
           >
-            <div class="h-48 overflow-hidden relative">
-              <img :src="supplier.image" :alt="supplier.name" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" />
-              <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-bold text-indigo-700 shadow">
-                ⭐ {{ supplier.rating }}
-              </div>
+            <div class="relative z-10">
+              <span class="bg-white/30 text-white text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm">{{ cat.count }}</span>
+              <h4 class="text-xl font-extrabold text-white mt-2">{{ cat.name }}</h4>
             </div>
-            <div class="p-6 flex flex-col flex-grow">
-              <span class="text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-1">{{ supplier.location }}</span>
-              <h3 class="text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition">{{ supplier.name }}</h3>
-              <p class="text-sm text-slate-500 mb-6 flex items-center">
-                <span class="mr-1.5">🚚</span> {{ supplier.deliveryTime }}
-              </p>
-              <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-                <span class="text-sm font-medium text-slate-600">{{ supplier.items.length }} Items Available</span>
-                <span class="text-indigo-600 font-semibold text-sm group-hover:translate-x-1 transition flex items-center">
-                  Shop Store &rarr;
-                </span>
-              </div>
+            <div class="absolute inset-0 z-0 opacity-40 group-hover:scale-105 transition duration-500">
+              <img :src="cat.image" :alt="cat.name" class="w-full h-full object-cover" />
+            </div>
+            <div class="relative z-10 pt-4">
+              <span class="bg-white text-[#222222] text-xs font-bold px-4 py-2 rounded-full shadow inline-flex items-center group-hover:bg-[#E5C75B] transition">
+                Explore &rarr;
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Supplier Catalog View -->
-      <div v-else>
-        <div class="mb-6 flex items-center justify-between flex-wrap gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-          <div class="flex items-center space-x-4">
-            <button 
-              @click="store.selectedSupplierId = null"
-              class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg font-medium text-sm transition"
-            >
-              &larr; Back to Suppliers
-            </button>
+      <!-- Section Divider CTA -->
+      <div class="my-16 text-center">
+        <a href="#products" class="bg-[#E5C75B] hover:bg-[#dabc4c] text-[#222222] font-extrabold px-10 py-4 rounded-full shadow-md transition inline-block text-lg">
+          Shop Now 💛
+        </a>
+        <p class="text-xs text-[#555555] mt-2 font-medium">✨ Guaranteed perfect fit with easy 30-day exchanges</p>
+      </div>
+
+      <!-- Row 2 (3-Column Feature Grid) -->
+      <div id="products" class="mb-16">
+        <div class="text-center mb-10">
+          <h3 class="text-2xl md:text-3xl font-extrabold text-[#222222]">Featured School Uniforms</h3>
+          <p class="text-sm text-[#555555] mt-1">Top-rated quality essentials ready to order</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div v-for="item in sampleProducts" :key="item.id" class="bg-[#F8F9FA] rounded-2xl p-5 border border-[#EEEEEE] shadow-sm hover:shadow-md transition flex flex-col justify-between">
             <div>
-              <span class="text-xs font-bold uppercase tracking-wider text-indigo-600">Active Supplier</span>
-              <h2 class="text-2xl font-bold text-slate-900">{{ store.selectedSupplier.name }}</h2>
+              <div class="h-48 rounded-xl overflow-hidden mb-4 relative">
+                <img :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
+                <span class="absolute top-2 right-2 bg-white/90 text-[#222222] font-bold text-xs px-2.5 py-1 rounded-full shadow">${{ item.price.toFixed(2) }}</span>
+              </div>
+              <span class="text-xs font-bold text-[#45B2C3] uppercase tracking-wider">{{ item.category }}</span>
+              <h4 class="font-bold text-[#222222] text-lg mt-1 mb-3">{{ item.name }}</h4>
             </div>
-          </div>
-          <div class="flex items-center space-x-2 text-sm text-slate-600">
-            <span>📍 {{ store.selectedSupplier.location }}</span>
-            <span>•</span>
-            <span>⭐ {{ store.selectedSupplier.rating }} Rating</span>
-          </div>
-        </div>
-
-        <!-- Filters & Search -->
-        <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-          <div class="flex items-center space-x-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
-            <button 
-              v-for="cat in ['All', 'Blazers', 'Skirts', 'Shirts', 'Accessories', 'Knitwear', 'Trousers', 'Sports', 'Outerwear', 'Dresses']"
-              :key="cat"
-              @click="store.selectedCategory = cat"
-              :class="store.selectedCategory === cat ? 'bg-indigo-600 text-white shadow' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'"
-              class="px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap"
-            >
-              {{ cat }}
+            <button @click="store.addToCart(item)" class="w-full bg-[#45B2C3] hover:bg-[#3ca2b3] text-white font-bold py-2.5 rounded-full text-sm transition shadow-sm">
+              Add to Cart 🎒
             </button>
           </div>
-
-          <div class="w-full md:w-72">
-            <input 
-              type="text" 
-              v-model="store.searchQuery"
-              placeholder="Search items in store..." 
-              class="w-full bg-white border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-sm"
-            />
-          </div>
         </div>
-
-        <!-- Catalog Grid -->
-        <div v-if="store.filteredItems.length === 0" class="text-center py-16 bg-white rounded-2xl border border-slate-100 shadow-sm">
-          <p class="text-lg text-slate-500 mb-2">No uniform items found matching your filters.</p>
-          <button @click="store.searchQuery = ''; store.selectedCategory = 'All'" class="text-indigo-600 font-semibold hover:underline">Reset Filters</button>
-        </div>
-
-        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div 
-            v-for="item in store.filteredItems" 
-            :key="item.id"
-            class="bg-white rounded-2xl shadow-sm hover:shadow-md transition border border-slate-100 p-5 flex flex-col"
-          >
-            <div class="flex justify-between items-start mb-3">
-              <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-md">{{ item.category }}</span>
-              <span class="text-lg font-extrabold text-slate-900">${{ item.price.toFixed(2) }}</span>
-            </div>
-
-            <h3 class="font-bold text-slate-800 text-lg mb-4">{{ item.name }}</h3>
-
-            <div class="mt-auto space-y-4">
-              <div>
-                <label class="block text-xs font-semibold text-slate-500 uppercase mb-1.5">Select Size:</label>
-                <select 
-                  v-model="selectedSize[item.id]" 
-                  class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  <option v-for="size in item.sizes" :key="size" :value="size">{{ size }}</option>
-                </select>
-              </div>
-
-              <button 
-                @click="handleAddToCart(item)"
-                class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg text-sm transition shadow-sm flex items-center justify-center space-x-2"
-              >
-                <span>Add to Cart</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-    </main>
+    </div>
+
+    <!-- D. Full-Width Promotional Banner -->
+    <div id="sale" class="w-full grid grid-cols-1 lg:grid-cols-12 my-12 shadow-inner">
+      <div class="lg:col-span-7 bg-[#E5C75B] p-10 md:p-16 flex flex-col justify-center items-start text-[#222222]">
+        <span class="bg-white/80 text-[#222222] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-widest mb-3">Limited Time Event</span>
+        <h3 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-3">Seasonal Sale – Up to 50% Off</h3>
+        <p class="text-[#222222]/80 text-base mb-6 max-w-lg font-medium">Stock up on premium quality blazers, shirts, skirts, and knitwear ahead of the new school term with massive seasonal discounts.</p>
+        <button @click="window.scrollTo({top: 600, behavior: 'smooth'})" class="bg-[#45B2C3] hover:bg-[#3ca2b3] text-white font-bold px-8 py-3.5 rounded-full shadow transition">
+          Shop Sale Items
+        </button>
+      </div>
+      <div class="lg:col-span-5 bg-[#F2B5BE] p-10 md:p-16 flex items-center justify-between relative overflow-hidden text-white">
+        <div class="relative z-10">
+          <span class="text-4xl font-extrabold block mb-2">50% OFF</span>
+          <p class="text-sm font-semibold max-w-[200px]">On all secondary school bundles and sports kits.</p>
+        </div>
+        <div class="relative z-10 bg-[#45B2C3] hover:bg-[#3ca2b3] text-white w-24 h-24 rounded-full flex items-center justify-center font-extrabold text-xs tracking-wider shadow-lg cursor-pointer transform hover:scale-105 transition text-center p-2" @click="window.scrollTo({top: 600, behavior: 'smooth'})">
+          SHOP NOW
+        </div>
+      </div>
+    </div>
+
+    <!-- E. Testimonials Carousel -->
+    <div id="reviews" class="bg-white py-12 px-[5%] border-t border-[#EEEEEE]">
+      <div class="max-w-6xl mx-auto flex items-center justify-between mb-8">
+        <div>
+          <h3 class="text-2xl font-extrabold text-[#222222]">Loved by Parents & Schools</h3>
+          <p class="text-sm text-[#555555]">Read what our community has to say</p>
+        </div>
+        <div class="flex space-x-2">
+          <button @click="store.prevTestimonial()" class="w-10 h-10 rounded-full bg-[#F8F9FA] border border-[#EEEEEE] flex items-center justify-center font-bold text-[#222222] hover:bg-[#E5C75B] transition">&larr;</button>
+          <button @click="store.nextTestimonial()" class="w-10 h-10 rounded-full bg-[#F8F9FA] border border-[#EEEEEE] flex items-center justify-center font-bold text-[#222222] hover:bg-[#E5C75B] transition">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div v-for="(t, idx) in store.testimonials" :key="t.id" :class="idx === store.activeTestimonial ? 'border-[#45B2C3] ring-2 ring-[#45B2C3]/20' : 'border-[#EEEEEE]'" class="bg-[#F8F9FA] border rounded-2xl p-5 flex items-center space-x-4 shadow-sm transition">
+          <div class="w-12 h-12 bg-[#E28D97] rounded-full flex items-center justify-center text-white font-bold text-lg flex-shrink-0 shadow-sm">
+            {{ t.name.charAt(0) }}
+          </div>
+          <div>
+            <h4 class="font-bold text-sm text-[#222222]">{{ t.name }}</h4>
+            <p class="text-xs text-[#45B2C3] font-semibold mb-1">{{ t.role }}</p>
+            <p class="text-xs text-[#555555] line-clamp-2">"{{ t.text }}"</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- F. Footer -->
+    <footer class="bg-[#B4CED4] text-[#222222] px-[5%] py-16">
+      <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-5 gap-8 items-start">
+        <div>
+          <span class="text-xl mb-4 block">🎒</span>
+          <h5 class="font-bold text-sm mb-3 uppercase tracking-wider text-[#222222]">Categories</h5>
+          <ul class="space-y-2 text-xs font-medium text-[#222222]/80">
+            <li><a href="#categories" class="hover:underline">Blazers & Formal</a></li>
+            <li><a href="#categories" class="hover:underline">Skirts & Pinafores</a></li>
+            <li><a href="#categories" class="hover:underline">Shirts & Polos</a></li>
+            <li><a href="#categories" class="hover:underline">Sports & PE Kits</a></li>
+          </ul>
+        </div>
+        <div>
+          <span class="text-xl mb-4 block">🛡️</span>
+          <h5 class="font-bold text-sm mb-3 uppercase tracking-wider text-[#222222]">Customer Care</h5>
+          <ul class="space-y-2 text-xs font-medium text-[#222222]/80">
+            <li><a href="#" class="hover:underline">Size Guide</a></li>
+            <li><a href="#" class="hover:underline">Delivery & Returns</a></li>
+            <li><a href="#" class="hover:underline">Track Your Order</a></li>
+            <li><a href="#" class="hover:underline">FAQs</a></li>
+          </ul>
+        </div>
+        <div>
+          <span class="text-xl mb-4 block">🏫</span>
+          <h5 class="font-bold text-sm mb-3 uppercase tracking-wider text-[#222222]">School Partners</h5>
+          <ul class="space-y-2 text-xs font-medium text-[#222222]/80">
+            <li><a href="#" class="hover:underline">Academy Directory</a></li>
+            <li><a href="#" class="hover:underline">Wholesale & PTAs</a></li>
+            <li><a href="#" class="hover:underline">Apply as Supplier</a></li>
+          </ul>
+        </div>
+        <div>
+          <span class="text-xl mb-4 block">✨</span>
+          <h5 class="font-bold text-sm mb-3 uppercase tracking-wider text-[#222222]">Company</h5>
+          <ul class="space-y-2 text-xs font-medium text-[#222222]/80">
+            <li><a href="#" class="hover:underline">About Us</a></li>
+            <li><a href="#" class="hover:underline">Sustainability</a></li>
+            <li><a href="#" class="hover:underline">Contact Support</a></li>
+          </ul>
+        </div>
+        <div class="col-span-2 md:col-span-1 flex md:justify-end items-center space-x-3 pt-4 md:pt-0">
+          <div class="w-10 h-10 rounded-full bg-[#F3A6B1] text-white flex items-center justify-center font-bold shadow cursor-pointer hover:opacity-90">f</div>
+          <div class="w-10 h-10 rounded-full bg-[#E5C75B] text-[#222222] flex items-center justify-center font-bold shadow cursor-pointer hover:opacity-90">ig</div>
+          <div class="w-10 h-10 rounded-full bg-[#5B7A82] text-white flex items-center justify-center font-bold shadow cursor-pointer hover:opacity-90">in</div>
+        </div>
+      </div>
+    </footer>
 
     <!-- Cart Sidebar Drawer -->
-    <div v-if="isCartOpen" class="fixed inset-0 z-50 overflow-hidden">
-      <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" @click="isCartOpen = false"></div>
-
+    <div v-if="store.isCartOpen" class="fixed inset-0 z-50 overflow-hidden">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity" @click="store.isCartOpen = false"></div>
       <div class="absolute inset-y-0 right-0 max-w-full flex pl-10">
         <div class="w-screen max-w-md bg-white shadow-2xl flex flex-col">
-          
-          <!-- Cart Header -->
-          <div class="p-6 bg-indigo-700 text-white flex items-center justify-between">
-            <h3 class="text-lg font-bold">Your Uniform Order Cart</h3>
-            <button @click="isCartOpen = false" class="text-indigo-200 hover:text-white text-xl font-bold">&times;</button>
+          <div class="p-6 bg-[#45B2C3] text-white flex items-center justify-between">
+            <h3 class="text-lg font-bold">Your Uniform Cart</h3>
+            <button @click="store.isCartOpen = false" class="text-white hover:text-gray-200 text-2xl font-bold">&times;</button>
           </div>
 
-          <!-- Success Alert -->
-          <div v-if="checkoutSuccess" class="m-6 bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center">
+          <div v-if="store.checkoutSuccess" class="m-6 bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl text-center">
             <p class="font-bold text-lg mb-1">🎉 Order Placed Successfully!</p>
-            <p class="text-sm text-emerald-600">Thank you for shopping with CampusThreads. Confirmation sent to your email.</p>
+            <p class="text-xs text-emerald-600">Thank you for ordering with Children Store. Your confirmation has been emailed.</p>
           </div>
 
-          <!-- Cart Body -->
           <div v-else class="flex-1 overflow-y-auto p-6 space-y-4">
-            <div v-if="store.cart.length === 0" class="text-center py-16 text-slate-400">
+            <div v-if="store.cart.length === 0" class="text-center py-16 text-gray-400">
               <p class="text-4xl mb-3">🛒</p>
-              <p class="font-medium text-slate-600">Your cart is currently empty</p>
-              <p class="text-xs text-slate-400 mt-1">Add items from any supplier to get started.</p>
+              <p class="font-medium text-gray-600">Your cart is empty</p>
             </div>
-
             <div v-else class="space-y-4">
-              <div v-for="(cartItem, idx) in store.cart" :key="idx" class="bg-slate-50 border border-slate-100 rounded-xl p-4 flex flex-col space-y-2">
+              <div v-for="(item, idx) in store.cart" :key="idx" class="bg-[#F8F9FA] border border-gray-100 rounded-xl p-4 flex flex-col space-y-2">
                 <div class="flex justify-between items-start">
-                  <div>
-                    <h4 class="font-bold text-slate-900">{{ cartItem.name }}</h4>
-                    <p class="text-xs text-indigo-600 font-medium">Supplier: {{ cartItem.supplierName }}</p>
-                  </div>
-                  <button @click="store.removeFromCart(idx)" class="text-slate-400 hover:text-rose-500 text-sm font-bold">&times;</button>
+                  <h4 class="font-bold text-[#222222]">{{ item.name }}</h4>
+                  <button @click="store.removeFromCart(idx)" class="text-gray-400 hover:text-rose-500 font-bold">&times;</button>
                 </div>
-
-                <div class="flex justify-between items-center pt-2 border-t border-slate-200/60 text-sm">
-                  <span class="text-slate-600">Size: <strong class="text-slate-800">{{ cartItem.size }}</strong></span>
-                  <span class="font-bold text-slate-900">${{ (cartItem.price * cartItem.quantity).toFixed(2) }}</span>
+                <div class="flex justify-between items-center text-sm">
+                  <span class="text-gray-500">${{ item.price.toFixed(2) }} each</span>
+                  <span class="font-bold text-[#222222]">${{ (item.price * item.quantity).toFixed(2) }}</span>
                 </div>
-
-                <div class="flex justify-between items-center pt-1">
-                  <div class="flex items-center space-x-2">
-                    <button @click="store.updateQuantity(idx, cartItem.quantity - 1)" class="w-7 h-7 bg-white border border-slate-200 rounded flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">-</button>
-                    <span class="text-sm font-semibold w-6 text-center">{{ cartItem.quantity }}</span>
-                    <button @click="store.updateQuantity(idx, cartItem.quantity + 1)" class="w-7 h-7 bg-white border border-slate-200 rounded flex items-center justify-center font-bold text-slate-600 hover:bg-slate-100">+</button>
-                  </div>
-                  <span class="text-xs text-slate-400">${{ cartItem.price.toFixed(2) }} each</span>
+                <div class="flex items-center space-x-2 pt-1">
+                  <button @click="store.updateQuantity(idx, item.quantity - 1)" class="w-7 h-7 bg-white border border-gray-200 rounded flex items-center justify-center font-bold text-gray-700">-</button>
+                  <span class="text-sm font-semibold w-6 text-center">{{ item.quantity }}</span>
+                  <button @click="store.updateQuantity(idx, item.quantity + 1)" class="w-7 h-7 bg-white border border-gray-200 rounded flex items-center justify-center font-bold text-gray-700">+</button>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- Cart Footer -->
-          <div v-if="!checkoutSuccess && store.cart.length > 0" class="p-6 bg-slate-50 border-t border-slate-100 space-y-4">
+          <div v-if="!store.checkoutSuccess && store.cart.length > 0" class="p-6 bg-[#F8F9FA] border-t border-gray-100 space-y-4">
             <div class="flex justify-between items-center text-lg">
-              <span class="font-semibold text-slate-600">Total Amount:</span>
-              <span class="font-extrabold text-slate-900">${{ store.cartTotal.toFixed(2) }}</span>
+              <span class="font-semibold text-gray-600">Total:</span>
+              <span class="font-extrabold text-[#222222]">${{ store.cartTotal.toFixed(2) }}</span>
             </div>
-
-            <button 
-              @click="handleCheckout"
-              class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-xl shadow transition flex items-center justify-center space-x-2"
-            >
-              <span>Proceed to Checkout</span>
+            <button @click="handleCheckout" class="w-full bg-[#45B2C3] hover:bg-[#3ca2b3] text-white font-bold py-3.5 rounded-full shadow transition">
+              Proceed to Checkout 🎒
             </button>
           </div>
-
         </div>
       </div>
     </div>
